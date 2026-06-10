@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# Installed by CodeReviewer (cr install). Remove with: cr uninstall
+set -e
+cr review --staged

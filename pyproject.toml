@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "code-reviewer"
+version = "0.1.0"
+description = "AI-powered code reviewer with auto-fix via Claude or GitHub Copilot CLI"
+requires-python = ">=3.10"
+dependencies = [
+    "click>=8.1",
+    "rich>=13.0",
+    "anthropic>=0.40",
+    "toml>=0.10",
+]
+
+[project.scripts]
+cr = "codereview.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
