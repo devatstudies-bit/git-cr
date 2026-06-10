@@ -95,7 +95,7 @@ def _fix_one_by_one(issues: list[Issue], ai, repo_root: str, show_preview: bool)
                 result = ai.apply_fix(issue, repo_root)
                 if result.applied:
                     for f in result.files_changed:
-                        git.restage(f)
+                        git.restage(f, cwd=Path(repo_root))
                     print_fixed(str(issue.file))
                     issue._fixed = True  # type: ignore[attr-defined]
                 else:
@@ -144,7 +144,7 @@ def _apply_batch(issues: list[Issue], ai, repo_root: str) -> None:
         result = ai.apply_fix(issue, repo_root)
         if result.applied:
             for f in result.files_changed:
-                git.restage(f)
+                git.restage(f, cwd=Path(repo_root))
             print_fixed(str(issue.file))
             issue._fixed = True  # type: ignore[attr-defined]
         else:

@@ -19,7 +19,7 @@ def repo_root() -> Path | None:
 
 
 def staged_files(root: Path, ignore_paths: list[str] | None = None) -> list[StagedFile]:
-    names = _run(["git", "diff", "--cached", "--name-only", "--diff-filter=ACM"])
+    names = _run(["git", "diff", "--cached", "--name-only", "--diff-filter=ACM"], cwd=root)
     if not names:
         return []
 
@@ -33,8 +33,8 @@ def staged_files(root: Path, ignore_paths: list[str] | None = None) -> list[Stag
         suffix = path.suffix.lower()
         language = LANGUAGE_MAP.get(suffix, "text")
 
-        content = _run(["git", "show", f":{name}"])
-        diff = _run(["git", "diff", "--cached", "--", name])
+        content = _run(["git", "show", f":{name}"], cwd=root)
+        diff = _run(["git", "diff", "--cached", "--", name], cwd=root)
 
         files.append(StagedFile(
             path=path,
@@ -46,9 +46,9 @@ def staged_files(root: Path, ignore_paths: list[str] | None = None) -> list[Stag
     return files
 
 
-def restage(path: Path) -> None:
+def restage(path: Path, cwd: Path | None = None) -> None:
     # Use POSIX separators — git accepts forward slashes on all platforms
-    _run(["git", "add", path.as_posix()])
+    _run(["git", "add", path.as_posix()], cwd=cwd)
 
 
 def _is_ignored(path: Path, patterns: list[str]) -> bool:
@@ -61,9 +61,9 @@ def _is_ignored(path: Path, patterns: list[str]) -> bool:
     return False
 
 
-def _run(cmd: list[str]) -> str:
+def _run(cmd: list[str], cwd: Path | None = None) -> str:
     try:
-        result = subprocess.run(cmd, capture_output=True, text=True, check=True)
+        result = subprocess.run(cmd, capture_output=True, text=True, check=True, cwd=cwd)
         return result.stdout
     except subprocess.CalledProcessError:
         return ""
